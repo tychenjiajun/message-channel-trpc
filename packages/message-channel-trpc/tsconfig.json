@@ -15,6 +15,6 @@
     "strict": true,
     "target": "esnext"
   },
-  "include": ["src/main/*.ts", "src/renderer/*.ts"],
+  "include": ["src/server/*.ts", "src/client/*.ts"],
   "exclude": ["node_modules"]
 }

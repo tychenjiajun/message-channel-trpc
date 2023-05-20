@@ -4,13 +4,13 @@ const config = {
   },
   entries: [
     {
-      filePath: './src/renderer/index.ts',
-      outFile: `./dist/renderer.d.ts`,
+      filePath: './src/client/index.ts',
+      outFile: `./dist/client.d.ts`,
       noCheck: true,
     },
     {
-      filePath: './src/main/index.ts',
-      outFile: `./dist/main.d.ts`,
+      filePath: './src/server/index.ts',
+      outFile: `./dist/server.d.ts`,
       noCheck: true
     },
   ],
