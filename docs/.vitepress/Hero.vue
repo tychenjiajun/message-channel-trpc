@@ -3,11 +3,11 @@
     <h1
       class="text-12 md-text-16 font-700 tracking-tighter leading-none pb-8 color-[var(--vp-home-hero-name-color)]"
     >
-      electron-trpc
+      message-channel-trpc
     </h1>
 
     <p class="text-5 md-text-7 font-500 md-tracking-tight leading-normal text-center">
-      Ergonomic and type-safe solution for building IPC in Electron
+      Ergonomic and type-safe solution for building IPC in MessageChannel
     </p>
 
     <div class="flex flex-row pt-8 gap-4">
@@ -19,7 +19,7 @@
 
       <a
         class="py-2 px-6 block rounded-full font-600 text-4 bg-[var(--vp-button-alt-bg)] border border-solid border-[var(--vp-button-alt-border)]"
-        href="https://github.com/jsonnull/electron-trpc"
+        href="https://github.com/tychenjiajun/message-channel-trpc"
         target="_blank"
         >View on Github</a
       >

@@ -1,22 +1,21 @@
-# electron-trpc
+# message-channel-trpc
 
 <p>
-  <a href="https://www.npmjs.com/package/electron-trpc">
-    <img alt="NPM" src="https://img.shields.io/npm/v/electron-trpc"/>
+  <a href="https://www.npmjs.com/package/message-channel-trpc">
+    <img alt="NPM" src="https://img.shields.io/npm/v/message-channel-trpc"/>
   </a>
-  <a href="https://codecov.io/gh/jsonnull/electron-trpc"> 
-  <img src="https://codecov.io/gh/jsonnull/electron-trpc/branch/main/graph/badge.svg?token=DU33O0D9LZ"/> 
+  <a href="https://codecov.io/gh/tychenjiajun/message-channel-trpc"> 
+  <img src="https://codecov.io/gh/tychenjiajun/message-channel-trpc/branch/main/graph/badge.svg?token=DU33O0D9LZ"/> 
   </a>
   <span>
-    <img alt="MIT" src="https://img.shields.io/npm/l/electron-trpc"/>
+    <img alt="MIT" src="https://img.shields.io/npm/l/message-channel-trpc"/>
   </span>
 </p>
 
 <p></p>
 
-**Build IPC for Electron with tRPC**
+**Build IPC for MessageChannel with tRPC**
 
-- Expose APIs from Electron's main process to one or more render processes.
 - Build fully type-safe IPC.
 - Secure alternative to opening servers on localhost.
 - Full support for queries, mutations, and subscriptions.
@@ -25,22 +24,22 @@
 
 ```sh
 # Using pnpm
-pnpm add electron-trpc
+pnpm add message-channel-trpc
 
 # Using yarn
-yarn add electron-trpc
+yarn add message-channel-trpc
 
 # Using npm
-npm install --save electron-trpc
+npm install --save message-channel-trpc
 ```
 
 ## Basic Setup
 
-1. Add your tRPC router to the Electron main process using `createIPCHandler`:
+1. Add your tRPC router to the MessageChannel main process using `createIPCHandler`:
 
    ```ts
    import { app } from 'electron';
-   import { createIPCHandler } from 'electron-trpc/main';
+   import { createIPCHandler } from 'message-channel-trpc/server';
    import { router } from './api';
 
    app.on('ready', () => {
@@ -58,20 +57,20 @@ npm install --save electron-trpc
 2. Expose the IPC to the render process from the [preload file](https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts):
 
    ```ts
-   import { exposeElectronTRPC } from 'electron-trpc/main';
+   import { exposeMessageChannelTRPC } from 'message-channel-trpc/server';
 
    process.once('loaded', async () => {
-     exposeElectronTRPC();
+     exposeMessageChannelTRPC();
    });
    ```
 
-   > Note: `electron-trpc` depends on `contextIsolation` being enabled, which is the default.
+   > Note: `message-channel-trpc` depends on `contextIsolation` being enabled, which is the default.
 
 3. When creating the client in the render process, use the `ipcLink` (instead of the HTTP or batch HTTP links):
 
    ```ts
    import { createTRPCProxyClient } from '@trpc/client';
-   import { ipcLink } from 'electron-trpc/renderer';
+   import { ipcLink } from 'message-channel-trpc/client';
 
    export const client = createTRPCProxyClient({
      links: [ipcLink()],

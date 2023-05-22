@@ -32,15 +32,15 @@ import Hero from './.vitepress/Hero.vue'
 
 ::: code-group
 
-```ts [renderer.tsx]
-function HelloElectron() {
+```ts [client.tsx]
+function HelloMessageChannel() {
   const { data } = trpcReact.greeting.useQuery({
-    name: 'Electron',
+    name: 'MessageChannel',
   });
 
   if (!data) return null;
 
-  return <div>{data.text}</div>; // Hello Electron
+  return <div>{data.text}</div>; // Hello MessageChannel
 }
 ```
 
@@ -51,7 +51,7 @@ function HelloElectron() {
 
 ::: code-group
 
-```ts [main.ts]
+```ts [server.ts]
 export const router = t.router({
   greeting: t.procedure
     .input(z.object({ name: z.string() }))

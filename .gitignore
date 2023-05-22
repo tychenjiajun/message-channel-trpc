@@ -3,5 +3,5 @@ dist/
 dist-electron/
 docs/.vitepress/cache/
 coverage/
-packages/electron-trpc/renderer.d.ts
-packages/electron-trpc/main.d.ts
+packages/message-channel-trpc/client.d.ts
+packages/message-channel-trpc/server.d.ts

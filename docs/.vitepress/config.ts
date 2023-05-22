@@ -2,10 +2,10 @@ import { defineConfig } from 'vitepress';
 import UnoCSS from 'unocss/vite';
 
 export default defineConfig({
-  title: 'electron-trpc',
+  title: 'message-channel-trpc',
   description: 'Just playing around.',
   themeConfig: {
-    repo: 'jsonnull/electron-trpc',
+    repo: 'tychenjiajun/message-channel-trpc',
     nav: [{ text: 'Guide', link: '/getting-started' }],
     sidebar: [
       {
@@ -15,7 +15,7 @@ export default defineConfig({
     ],
     footer: {
       message: 'Released under the MIT License.',
-      copyright: 'Copyright © 2023-present Jason Nall',
+      copyright: 'Copyright © 2023-present Jiajun Chen',
     },
   },
   vite: {
