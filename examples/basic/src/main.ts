@@ -1,4 +1,5 @@
-import { applyMessagePortHandlers } from 'message-channel-trpc/server';
+import { applyMessagePortHandler } from 'message-channel-trpc/server';
+import { appRouter } from './router';
 
 const { port1, port2 } = new MessageChannel();
 
@@ -8,7 +9,7 @@ const otherWindow = ifr?.contentWindow;
 ifr?.addEventListener('load', iframeLoaded, false);
 
 function iframeLoaded() {
-  otherWindow?.postMessage('Hello from the main page!', '*', [port2]);
+  otherWindow?.postMessage('port', '*', [port2]);
 }
 port1.start();
-applyMessagePortHandler(port1);
+applyMessagePortHandler({ port: port1, router: appRouter });
