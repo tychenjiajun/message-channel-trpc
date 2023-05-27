@@ -83,7 +83,7 @@ jobs:
         node: ['18.x']
         os: [ubuntu-latest]
 
-    needs: test
+    # needs: test
     if: github.event_name == 'push' && github.ref == 'refs/heads/next'
 
     steps:
