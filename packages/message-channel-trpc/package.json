@@ -19,13 +19,12 @@
     "name": "Jiajun Chen",
     "url": "https://github.com/tychenjiajun"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tychenjiajun/message-channel-trpc.git"
+  },
   "license": "MIT",
-  "files": [
-    "dist",
-    "src",
-    "server.d.ts",
-    "client.d.ts"
-  ],
+  "files": ["dist", "src", "server.d.ts", "client.d.ts"],
   "scripts": {
     "build": "tsc && vite build -c src/server/vite.config.ts && vite build -c src/client/vite.config.ts && pnpm build:types",
     "build:types": "dts-bundle-generator --config ./dts-bundle-generator.config.ts && pnpm run copy:types",
