@@ -3,7 +3,7 @@
   "description": "MessageChannel support for tRPC",
   "version": "0.0.1",
   "exports": {
-    "./main": {
+    "./server": {
       "require": "./dist/server.cjs",
       "import": "./dist/server.mjs",
       "types": "./dist/server.d.ts"
@@ -55,8 +55,5 @@
   "peerDependencies": {
     "@trpc/client": ">10.0.0",
     "@trpc/server": ">10.0.0"
-  },
-  "dependencies": {
-    "debug": "^4.3.4"
   }
 }

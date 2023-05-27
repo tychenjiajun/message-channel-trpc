@@ -80,7 +80,7 @@ function assertIsJSONRPC2OrUndefined(obj: unknown): asserts obj is '2.0' | undef
   }
 }
 
-export function parseMessage(
+function parseMessage(
   obj: unknown,
   transformer: CombinedDataTransformer
 ): TRPCClientOutgoingMessage {

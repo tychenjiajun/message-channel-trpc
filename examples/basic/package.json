@@ -1,0 +1,21 @@
+{
+  "name": "examples/basic",
+  "version": "0.0.1",
+  "private": true,
+  "main": "dist-electron/index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@trpc/client": "10.28.0",
+    "@trpc/server": "10.28.0",
+    "message-channel-trpc": "workspace:^",
+    "zod": "^3.21.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.2",
+    "vite": "^4.2.1"
+  }
+}
