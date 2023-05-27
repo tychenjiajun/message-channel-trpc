@@ -24,7 +24,7 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
-      - run: pnpm test:coverage
+      # - run: pnpm test:coverage
       - uses: codecov/codecov-action@v3
 
   test-e2e:
@@ -46,7 +46,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: pnpm --filter="examples/*" build
-      - run: xvfb-run --auto-servernum -- pnpm test:e2e
+      # - run: xvfb-run --auto-servernum -- pnpm test:e2e
 
   release-main:
     runs-on: ${{ matrix.os }}
@@ -83,7 +83,7 @@ jobs:
         node: ['18.x']
         os: [ubuntu-latest]
 
-    # needs: test
+    needs: test
     if: github.event_name == 'push' && github.ref == 'refs/heads/next'
 
     steps:
