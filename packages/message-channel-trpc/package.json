@@ -1,7 +1,7 @@
 {
   "name": "message-channel-trpc",
   "description": "MessageChannel support for tRPC",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "exports": {
     "./server": {
       "require": "./dist/server.cjs",
