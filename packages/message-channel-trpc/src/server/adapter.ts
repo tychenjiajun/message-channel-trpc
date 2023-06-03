@@ -15,23 +15,7 @@ import {
 import { transformTRPCResponse, getErrorShape } from '@trpc/server/shared';
 import { Unsubscribable, isObservable } from '@trpc/server/observable';
 import { getTRPCErrorFromUnknown, getCauseFromUnknown } from './utils';
-
-type MessagePortMain = {
-  // Docs: https://electronjs.org/docs/api/message-port-main
-
-  /**
-   * Emitted when the remote end of a MessagePortMain object becomes disconnected.
-   */
-  on(event: 'close', listener: Function): void;
-  once(event: 'close', listener: Function): void;
-  /**
-   * Emitted when a MessagePortMain object receives a message.
-   */
-  on(event: 'message', listener: (messageEvent: MessageEvent) => void): void;
-  once(event: 'message', listener: (messageEvent: MessageEvent) => void): void;
-
-  postMessage(message: any, transfer?: MessagePortMain[]): void;
-};
+import type { MessagePortMain, MessagePort } from '../type';
 
 type OnErrorFunction<TRouter extends AnyRouter> = (opts: {
   error: TRPCError;
@@ -297,7 +281,7 @@ export function applyMessagePortHandler<TRouter extends AnyRouter>(
     port.on('message', onMessage);
     port.once('close', onceClose);
   } else {
-    port.onmessage = onMessage;
+    port.addEventListener('message', onMessage);
   }
 
   return {

@@ -8,6 +8,7 @@ import {
 import { TRPCClientError, TRPCLink, Operation } from '@trpc/client';
 import { Observer, UnsubscribeFn, observable } from '@trpc/server/observable';
 import { transformResult } from './internal';
+import type { MessagePortMain, MessagePort } from '../type';
 
 type MessagePortCallbackResult<TRouter extends AnyRouter, TOutput> = TRPCResponseMessage<
   TOutput,
@@ -32,7 +33,7 @@ class TRPCSubscriptionEndedError extends Error {
 }
 
 export interface MessagePortClientOptions {
-  port: MessagePort;
+  port: MessagePort | MessagePortMain;
 }
 
 export function createMessagePortClient(opts: MessagePortClientOptions) {
@@ -49,7 +50,7 @@ export function createMessagePortClient(opts: MessagePortClientOptions) {
     /**
      * Reference to the MessagePort instance this request was made to
      */
-    port: MessagePort;
+    port: MessagePort | MessagePortMain;
     type: ProcedureType;
     callbacks: TCallbacks;
     op: Operation;
@@ -99,13 +100,20 @@ export function createMessagePortClient(opts: MessagePortClientOptions) {
         req.callbacks.complete();
       }
     };
-    port.addEventListener('message', ({ data }) => {
+
+    const onMessage = ({ data }: { data: string }) => {
       const msg = JSON.parse(data) as TRPCClientIncomingMessage;
 
       if (!('method' in msg)) {
         handleIncomingResponse(msg);
       }
-    });
+    };
+
+    if ('on' in port) {
+      port.on('message', onMessage);
+    } else {
+      port.addEventListener('message', onMessage);
+    }
 
     return port;
   }

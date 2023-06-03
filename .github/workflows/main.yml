@@ -24,7 +24,7 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
-      # - run: pnpm test:coverage
+      - run: pnpm test:coverage
       - uses: codecov/codecov-action@v3
 
   test-e2e:
