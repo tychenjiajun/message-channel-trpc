@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { createTRPCProxyClient } from '@trpc/client';
 import { initTRPC } from '@trpc/server';
-import type { TRPCResponseMessage } from '@trpc/server/rpc';
 import z from 'zod';
 import { createMessagePortClient, messageChannelLink } from '../messageChannelLink';
 import { MessagePort } from '../../type';
