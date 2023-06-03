@@ -12,11 +12,11 @@ export type MessagePortMain = {
   on(event: 'message', listener: (messageEvent: MessageEvent) => void): void;
   once(event: 'message', listener: (messageEvent: MessageEvent) => void): void;
 
-  postMessage(message: any, transfer?: MessagePortMain[]): void;
+  postMessage(message: any): void;
 };
 
 export type MessagePort = {
-  postMessage(message: any, transfer?: MessagePort[]): void;
+  postMessage(message: any): void;
   addEventListener(type: 'message', listener: (messageEvent: MessageEvent) => void): void;
   removeEventListener(type: 'message', listener: (messageEvent: MessageEvent) => void): void;
 };

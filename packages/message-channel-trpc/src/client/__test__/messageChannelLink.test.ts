@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { createTRPCProxyClient } from '@trpc/client';
 import { initTRPC } from '@trpc/server';
 import type { TRPCResponseMessage } from '@trpc/server/rpc';
@@ -24,26 +24,29 @@ const router = t.router({
 });
 
 type Router = typeof router;
+let handlers: ((e: { data: string }) => void)[] = [];
 
-const port: MessagePort = {} as any;
-let handlers: ((message: TRPCResponseMessage) => void)[] = [];
-beforeEach(() => {
-  handlers = [];
-  port.postMessage = vi.fn();
-  port.addEventListener = vi.fn().mockImplementation(handler => {
+const port: MessagePort = {
+  postMessage: vi.fn(),
+  addEventListener: vi.fn().mockImplementation((_msg, handler) => {
     handlers.push(handler);
-  });
+  }),
+} as any;
+
+
+beforeEach(() => {
+  vi.useFakeTimers();
+  vi.restoreAllMocks();
 });
 
 describe('messageChannelLink', () => {
   test('can create messageChannelLink', () => {
-    const mock = vi.mocked(port);
     expect(() =>
       createTRPCProxyClient({
         links: [
           messageChannelLink({
             client: createMessagePortClient({
-              port: mock,
+              port,
             }),
           }),
         ],
@@ -52,19 +55,14 @@ describe('messageChannelLink', () => {
   });
 
   describe('operations', () => {
-    let client: ReturnType<typeof createTRPCProxyClient<Router>>;
-    const mock = vi.mocked(port);
-
-    beforeEach(() => {
-      client = createTRPCProxyClient({
-        links: [
-          messageChannelLink({
-            client: createMessagePortClient({
-              port: mock,
-            }),
+    const client = createTRPCProxyClient<Router>({
+      links: [
+        messageChannelLink({
+          client: createMessagePortClient({
+            port,
           }),
-        ],
-      });
+        }),
+      ],
     });
 
     test('routes query to/from', async () => {
@@ -72,26 +70,17 @@ describe('messageChannelLink', () => {
 
       const query = client.testQuery.query().then(queryResponse);
 
-      expect(mock.postMessage).toHaveBeenCalledTimes(1);
-      expect(mock.postMessage).toHaveBeenCalledWith({
-        method: 'request',
-        operation: {
-          context: {},
-          id: 1,
-          input: undefined,
-          path: 'testQuery',
-          type: 'query',
-        },
-      });
+      await vi.runAllTimersAsync();
+
+      expect(port.postMessage).toHaveBeenCalledTimes(1);
+      expect(port.postMessage).toHaveBeenCalledWith(
+        '{"id":1,"method":"query","params":{"path":"testQuery"}}'
+      );
 
       expect(queryResponse).not.toHaveBeenCalled();
 
       handlers[0]({
-        id: 1,
-        result: {
-          type: 'data',
-          data: 'query success',
-        },
+        data: '{"id":1,"jsonrpc":"2.0","result":{"type":"data","data":"query success"}}',
       });
 
       await query;
@@ -105,26 +94,17 @@ describe('messageChannelLink', () => {
 
       const mutation = client.testMutation.mutate('test input').then(mutationResponse);
 
-      expect(mock.postMessage).toHaveBeenCalledTimes(1);
-      expect(mock.postMessage).toHaveBeenCalledWith({
-        method: 'request',
-        operation: {
-          context: {},
-          id: 1,
-          input: 'test input',
-          path: 'testMutation',
-          type: 'mutation',
-        },
-      });
+      await vi.runAllTimersAsync();
 
-      mock.postMessage.mockClear();
+      expect(port.postMessage).toHaveBeenCalledTimes(1);
+      expect(port.postMessage).toHaveBeenCalledWith(
+        '{"id":2,"method":"mutation","params":{"input":"test input","path":"testMutation"}}'
+      );
+
+      await vi.runAllTimersAsync();
 
       handlers[0]({
-        id: 1,
-        result: {
-          type: 'data',
-          data: 'mutation success',
-        },
+        data: '{"id":2,"jsonrpc":"2.0","result":{"type":"data","data":"mutation success"}}',
       });
 
       await mutation;
@@ -145,28 +125,19 @@ describe('messageChannelLink', () => {
         onComplete: subscriptionComplete,
       });
 
-      expect(mock.postMessage).toHaveBeenCalledTimes(1);
-      expect(mock.postMessage).toHaveBeenCalledWith({
-        method: 'request',
-        operation: {
-          context: {},
-          id: 1,
-          input: undefined,
-          path: 'testSubscription',
-          type: 'subscription',
-        },
-      });
+      await vi.runAllTimersAsync();
+
+      expect(port.postMessage).toHaveBeenCalledTimes(1);
+      expect(port.postMessage).toHaveBeenCalledWith(
+        '{"id":3,"method":"subscription","params":{"path":"testSubscription"}}'
+      );
 
       /*
        * Multiple responses from the server
        */
       const respond = (str: string) =>
         handlers[0]({
-          id: 1,
-          result: {
-            type: 'data',
-            data: str,
-          },
+          data: '{"id":3,"jsonrpc":"2.0","result":{"type":"data","data":"' + str + '"}}',
         });
 
       respond('test 1');
@@ -181,13 +152,10 @@ describe('messageChannelLink', () => {
        */
       subscription.unsubscribe();
 
-      expect(mock.postMessage).toHaveBeenCalledTimes(2);
-      expect(mock.postMessage.mock.calls[1]).toEqual([
-        {
-          id: 1,
-          method: 'subscription.stop',
-        },
-      ]);
+      await vi.runAllTimersAsync();
+
+      expect(port.postMessage).toHaveBeenCalledTimes(2);
+      expect(port.postMessage).lastCalledWith('{"id":3,"method":"subscription.stop"}');
 
       expect(subscriptionComplete).toHaveBeenCalledTimes(1);
 
@@ -208,7 +176,9 @@ describe('messageChannelLink', () => {
       /* const query2 = */ client.testQuery.query().then(queryResponse2);
       const query3 = client.testQuery.query().then(queryResponse3);
 
-      expect(mock.postMessage).toHaveBeenCalledTimes(3);
+      await vi.runAllTimersAsync();
+
+      expect(port.postMessage).toHaveBeenCalledTimes(1);
 
       expect(queryResponse1).not.toHaveBeenCalled();
       expect(queryResponse2).not.toHaveBeenCalled();
@@ -216,18 +186,10 @@ describe('messageChannelLink', () => {
 
       // Respond to queries in a different order
       handlers[0]({
-        id: 1,
-        result: {
-          type: 'data',
-          data: 'query success 1',
-        },
+        data: '{"id":4,"jsonrpc":"2.0","result":{"type":"data","data":"query success 1"}}',
       });
       handlers[0]({
-        id: 3,
-        result: {
-          type: 'data',
-          data: 'query success 3',
-        },
+        data: '{"id":6,"jsonrpc":"2.0","result":{"type":"data","data":"query success 3"}}',
       });
 
       await Promise.all([query1, query3]);
